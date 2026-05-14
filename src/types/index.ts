@@ -52,7 +52,7 @@ export interface PosterState {
 export const DEFAULT_STATE: PosterState = {
   originalImage: null,
   croppedImage: null,
-  cropAspect: '4:3',
+  cropAspect: '3:2',
   bgColor: '#c8b8a8',
   colors: [],
   text: {

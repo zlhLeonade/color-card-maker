@@ -10,6 +10,7 @@ import ExportPanel from './components/ExportPanel';
 import { extractColorsFromImage, recommendTextColor, recommendBgColor } from './utils/color';
 import { readExifData } from './utils/image';
 import { exportToPng } from './utils/export';
+import { formatExifDateShort } from './utils/date';
 import { DEFAULT_STATE, type PosterState } from './types';
 
 const sections = [
@@ -272,6 +273,8 @@ export default function App() {
                   text={state.text}
                   onChange={(text) => setState((prev) => ({ ...prev, text }))}
                   extractedColors={state.colors}
+                  bgColor={state.bgColor}
+                  hasCamera={!!state.exifData?.cameraModel}
                 />
               )}
 
@@ -283,7 +286,7 @@ export default function App() {
                     </label>
                     {state.exifData?.dateTime ? (
                       <div className="flex items-center justify-between min-h-[44px]">
-                        <span className="text-sm text-stone-600">{state.exifData.dateTime}</span>
+                        <span className="text-sm text-stone-600">{formatExifDateShort(state.exifData.dateTime)}</span>
                         <button
                           onClick={() => update({ exifSettings: { ...state.exifSettings, showDate: !state.exifSettings.showDate } })}
                           className={`relative w-12 h-7 rounded-full transition-colors duration-200 min-w-[48px] ${

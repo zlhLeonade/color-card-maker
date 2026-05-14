@@ -1,10 +1,14 @@
+import { Sparkles } from 'lucide-react';
 import type { TextStyle } from '../types';
 import { FONT_OPTIONS } from '../types';
+import { generateCaption } from '../utils/caption';
 
 interface TextControlsProps {
   text: TextStyle;
   onChange: (text: TextStyle) => void;
   extractedColors: string[];
+  bgColor: string;
+  hasCamera: boolean;
 }
 
 function Slider({ label, value, min, max, step, unit, onChange }: {
@@ -43,14 +47,25 @@ export default function TextControls({
   text,
   onChange,
   extractedColors,
+  bgColor,
+  hasCamera,
 }: TextControlsProps) {
   const update = (partial: Partial<TextStyle>) => {
     onChange({ ...text, ...partial });
   };
 
+  const handleGenerate = () => {
+    const caption = generateCaption({
+      bgColor,
+      colors: extractedColors,
+      hasCamera,
+    });
+    update({ content: caption });
+  };
+
   return (
     <div className="space-y-5">
-      {/* Text input */}
+      {/* Text input + generate button */}
       <div>
         <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium block mb-2">
           文字内容
@@ -62,6 +77,13 @@ export default function TextControls({
           rows={2}
           className="w-full px-3.5 py-3 bg-stone-50/80 border border-stone-200/60 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-stone-300/50 focus:border-stone-300 transition-all placeholder:text-stone-300"
         />
+        <button
+          onClick={handleGenerate}
+          className="mt-2 w-full flex items-center justify-center gap-2 min-h-[44px] px-4 bg-stone-100/80 text-stone-600 rounded-xl text-sm font-medium active:bg-stone-200 transition-colors"
+        >
+          <Sparkles size={14} />
+          Generate caption
+        </button>
       </div>
 
       {/* Font family */}

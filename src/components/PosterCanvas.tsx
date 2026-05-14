@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import type { TextStyle, ExifData, ExifSettings } from '../types';
 import { isColorDark } from '../utils/color';
+import { formatExifDateShort } from '../utils/date';
 
 interface PosterCanvasProps {
   bgColor: string;
@@ -15,16 +16,18 @@ function PosterCanvas(
   { bgColor, croppedImage, imageWidth, text, exifData, exifSettings }: PosterCanvasProps,
   ref: React.Ref<HTMLDivElement>
 ) {
-  // Build subtle background gradient: lighter top edge, stable middle, slightly darker bottom edge
   const dark = isColorDark(bgColor);
   const topFade = dark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.25)';
   const bottomFade = dark ? 'rgba(0,0,0,0.12)' : 'rgba(0,0,0,0.06)';
 
-  // EXIF info line
-  const exifParts: string[] = [];
-  if (exifSettings.showDate && exifData?.dateTime) exifParts.push(exifData.dateTime);
-  if (exifSettings.showCamera && exifData?.cameraModel) exifParts.push(exifData.cameraModel);
-  const exifLine = exifParts.join(' · ');
+  const dateStr = exifSettings.showDate && exifData?.dateTime
+    ? formatExifDateShort(exifData.dateTime) : null;
+  const cameraStr = exifSettings.showCamera && exifData?.cameraModel
+    ? exifData.cameraModel : null;
+
+  // Info font sizes scale with main text
+  const dateFontSize = Math.max(14, Math.round(text.fontSize * 0.42));
+  const cameraFontSize = Math.max(12, Math.round(text.fontSize * 0.36));
 
   return (
     <div
@@ -36,7 +39,7 @@ function PosterCanvas(
         overflow: 'hidden',
       }}
     >
-      {/* Background layer — upper portion with subtle internal gradient */}
+      {/* Background layer */}
       <div
         style={{
           position: 'absolute',
@@ -52,56 +55,75 @@ function PosterCanvas(
         }}
       />
 
-      {/* Text layer — positioned in upper background area */}
-      {text.content && (
-        <div
-          style={{
-            position: 'absolute',
-            top: `${text.position}%`,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '82%',
-            textAlign: 'center',
-            fontFamily: text.fontFamily,
-            fontSize: `${text.fontSize}px`,
-            fontWeight: 300,
-            color: text.color,
-            letterSpacing: `${text.letterSpacing}em`,
-            lineHeight: text.lineHeight,
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-word',
-            zIndex: 10,
-            transition: 'color 0.4s ease',
-          }}
-        >
-          {text.content}
-        </div>
-      )}
+      {/* Text + info block — centered in upper area */}
+      <div
+        style={{
+          position: 'absolute',
+          top: `${text.position}%`,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '82%',
+          textAlign: 'center',
+          zIndex: 10,
+        }}
+      >
+        {/* Main caption */}
+        {text.content && (
+          <div
+            style={{
+              fontFamily: text.fontFamily,
+              fontSize: `${text.fontSize}px`,
+              fontWeight: 300,
+              color: text.color,
+              letterSpacing: `${text.letterSpacing}em`,
+              lineHeight: text.lineHeight,
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+              transition: 'color 0.4s ease',
+            }}
+          >
+            {text.content}
+          </div>
+        )}
 
-      {/* EXIF info — smaller, below main text */}
-      {exifLine && (
-        <div
-          style={{
-            position: 'absolute',
-            top: `${text.position + text.fontSize * 0.06 + 4}%`,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            textAlign: 'center',
-            fontFamily: '"Special Elite", Georgia, serif',
-            fontSize: `${Math.max(12, text.fontSize * 0.38)}px`,
-            fontWeight: 400,
-            color: text.color,
-            opacity: 0.55,
-            letterSpacing: '0.08em',
-            zIndex: 10,
-            transition: 'color 0.4s ease',
-          }}
-        >
-          {exifLine}
-        </div>
-      )}
+        {/* Date line */}
+        {dateStr && (
+          <div
+            style={{
+              fontFamily: '"Special Elite", Georgia, serif',
+              fontSize: `${dateFontSize}px`,
+              fontWeight: 400,
+              color: text.color,
+              opacity: 0.75,
+              letterSpacing: '0.08em',
+              marginTop: `${Math.round(text.fontSize * 0.7)}px`,
+              transition: 'color 0.4s ease',
+            }}
+          >
+            {dateStr}
+          </div>
+        )}
 
-      {/* Photo layer — full width at bottom, clear edge */}
+        {/* Camera line */}
+        {cameraStr && (
+          <div
+            style={{
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              fontSize: `${cameraFontSize}px`,
+              fontWeight: 400,
+              color: text.color,
+              opacity: 0.6,
+              letterSpacing: '0.06em',
+              marginTop: `${Math.round(text.fontSize * 0.25)}px`,
+              transition: 'color 0.4s ease',
+            }}
+          >
+            {cameraStr}
+          </div>
+        )}
+      </div>
+
+      {/* Photo layer */}
       {croppedImage && (
         <div
           style={{
