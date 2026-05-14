@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  color-card:
+    image: caddy:alpine
+    container_name: color-card-maker
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./dist:/srv:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    restart: unless-stopped
+
+volumes:
+  caddy_data:

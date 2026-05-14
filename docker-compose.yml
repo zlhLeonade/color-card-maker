@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  color-card:
+    image: nginx:alpine
+    container_name: color-card-maker
+    ports:
+      - "8080:80"
+    volumes:
+      - ./dist:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
