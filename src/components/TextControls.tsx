@@ -1,13 +1,10 @@
-import type { TextStyle, ExifSettings } from '../types';
+import type { TextStyle } from '../types';
 import { FONT_OPTIONS } from '../types';
 
 interface TextControlsProps {
   text: TextStyle;
   onChange: (text: TextStyle) => void;
   extractedColors: string[];
-  exifSettings: ExifSettings;
-  onExifSettingsChange: (s: ExifSettings) => void;
-  hasExifData: boolean;
 }
 
 function Slider({ label, value, min, max, step, unit, onChange }: {
@@ -20,8 +17,8 @@ function Slider({ label, value, min, max, step, unit, onChange }: {
   onChange: (v: number) => void;
 }) {
   return (
-    <div>
-      <div className="flex justify-between mb-2">
+    <div className="py-1">
+      <div className="flex justify-between mb-2.5">
         <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium">
           {label}
         </label>
@@ -42,40 +39,10 @@ function Slider({ label, value, min, max, step, unit, onChange }: {
   );
 }
 
-function Toggle({ label, checked, onChange }: {
-  label: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <label className="flex items-center justify-between cursor-pointer">
-      <span className="text-xs text-stone-600">{label}</span>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        onClick={() => onChange(!checked)}
-        className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
-          checked ? 'bg-stone-700' : 'bg-stone-200'
-        }`}
-      >
-        <span
-          className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 ${
-            checked ? 'translate-x-5' : 'translate-x-0'
-          }`}
-        />
-      </button>
-    </label>
-  );
-}
-
 export default function TextControls({
   text,
   onChange,
   extractedColors,
-  exifSettings,
-  onExifSettingsChange,
-  hasExifData,
 }: TextControlsProps) {
   const update = (partial: Partial<TextStyle>) => {
     onChange({ ...text, ...partial });
@@ -93,7 +60,7 @@ export default function TextControls({
           onChange={(e) => update({ content: e.target.value })}
           placeholder="输入海报文字..."
           rows={2}
-          className="w-full px-3.5 py-2.5 bg-stone-50/80 border border-stone-200/60 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-stone-300/50 focus:border-stone-300 transition-all placeholder:text-stone-300"
+          className="w-full px-3.5 py-3 bg-stone-50/80 border border-stone-200/60 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-stone-300/50 focus:border-stone-300 transition-all placeholder:text-stone-300"
         />
       </div>
 
@@ -105,7 +72,7 @@ export default function TextControls({
         <select
           value={text.fontFamily}
           onChange={(e) => update({ fontFamily: e.target.value })}
-          className="w-full px-3.5 py-2.5 bg-stone-50/80 border border-stone-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-300/50 focus:border-stone-300 transition-all appearance-none cursor-pointer"
+          className="w-full px-3.5 py-3 bg-stone-50/80 border border-stone-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-300/50 focus:border-stone-300 transition-all appearance-none cursor-pointer"
         >
           {FONT_OPTIONS.map((font) => (
             <option key={font.value} value={font.value}>
@@ -126,14 +93,14 @@ export default function TextControls({
 
       {/* Text color */}
       <div>
-        <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium block mb-2.5">
+        <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium block mb-3">
           文字颜色
         </label>
-        <div className="flex gap-2.5 flex-wrap items-center">
+        <div className="flex gap-3 flex-wrap items-center">
           {['#ffffff', '#1a1a1a', '#f0ede8', '#2a2520'].map((color) => (
-            <button key={color} onClick={() => update({ color })} className="relative group">
+            <button key={color} onClick={() => update({ color })} className="relative group p-1">
               <div
-                className="w-9 h-9 rounded-full transition-transform duration-150 group-active:scale-90"
+                className="w-10 h-10 rounded-full transition-transform duration-150 group-active:scale-90"
                 style={{
                   backgroundColor: color,
                   boxShadow: color === '#ffffff' || color === '#f0ede8'
@@ -141,46 +108,25 @@ export default function TextControls({
                 }}
               />
               {text.color === color && (
-                <div className="absolute -inset-[3px] rounded-full border-2 border-stone-600" />
+                <div className="absolute inset-0 rounded-full border-2 border-stone-600" />
               )}
             </button>
           ))}
           {extractedColors.map((color) => (
-            <button key={`text-${color}`} onClick={() => update({ color })} className="relative group">
-              <div className="w-9 h-9 rounded-full transition-transform duration-150 group-active:scale-90"
+            <button key={`text-${color}`} onClick={() => update({ color })} className="relative group p-1">
+              <div className="w-10 h-10 rounded-full transition-transform duration-150 group-active:scale-90"
                 style={{ backgroundColor: color }} />
               {text.color === color && (
-                <div className="absolute -inset-[3px] rounded-full border-2 border-stone-600" />
+                <div className="absolute inset-0 rounded-full border-2 border-stone-600" />
               )}
             </button>
           ))}
-          <input type="color" value={text.color}
-            onChange={(e) => update({ color: e.target.value })}
-            className="w-9 h-9 rounded-full cursor-pointer" />
-        </div>
-      </div>
-
-      {/* EXIF section */}
-      <div className="pt-2 border-t border-stone-100">
-        <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium block mb-3">
-          附加信息
-        </label>
-        {hasExifData ? (
-          <div className="space-y-3">
-            <Toggle
-              label="显示拍摄时间"
-              checked={exifSettings.showDate}
-              onChange={(v) => onExifSettingsChange({ ...exifSettings, showDate: v })}
-            />
-            <Toggle
-              label="显示相机型号"
-              checked={exifSettings.showCamera}
-              onChange={(v) => onExifSettingsChange({ ...exifSettings, showCamera: v })}
-            />
+          <div className="relative p-1">
+            <input type="color" value={text.color}
+              onChange={(e) => update({ color: e.target.value })}
+              className="w-10 h-10 rounded-full cursor-pointer" />
           </div>
-        ) : (
-          <p className="text-xs text-stone-300">未检测到 EXIF 信息</p>
-        )}
+        </div>
       </div>
     </div>
   );

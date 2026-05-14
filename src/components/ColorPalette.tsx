@@ -24,9 +24,9 @@ export default function ColorPalette({
         </span>
         <button
           onClick={onRefresh}
-          className="text-[11px] text-stone-400 hover:text-stone-600 flex items-center gap-1 transition-colors"
+          className="text-[11px] text-stone-400 active:text-stone-600 flex items-center gap-1.5 transition-colors min-h-[44px] px-2 -mr-2"
         >
-          <RefreshCw size={11} />
+          <RefreshCw size={12} />
           刷新
         </button>
       </div>
@@ -38,11 +38,11 @@ export default function ColorPalette({
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: i * 0.06, type: 'spring', stiffness: 400, damping: 20 }}
             onClick={() => onSelect(color)}
-            className="flex flex-col items-center gap-1.5 group"
+            className="flex flex-col items-center gap-1.5 group p-1"
           >
             <div className="relative">
               <div
-                className="w-11 h-11 rounded-full transition-transform duration-200 group-active:scale-95"
+                className="w-11 h-11 rounded-full transition-transform duration-200 group-active:scale-90"
                 style={{ backgroundColor: color }}
               />
               {selectedColor === color && (
