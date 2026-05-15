@@ -11,7 +11,7 @@ import { extractColorsFromImage, recommendTextColor, recommendBgColor } from './
 import { readExifData } from './utils/image';
 import { exportToPng } from './utils/export';
 import { formatExifDateShort } from './utils/date';
-import { DEFAULT_STATE, type PosterState } from './types';
+import { DEFAULT_STATE, type PosterState, type CropAspect } from './types';
 
 const sections = [
   { id: 'image', label: '图片', icon: Image },
@@ -52,9 +52,9 @@ export default function App() {
     reader.readAsDataURL(file);
   }, [update]);
 
-  const handleCropComplete = useCallback(async (croppedImage: string) => {
+  const handleCropComplete = useCallback(async (croppedImage: string, aspect: CropAspect) => {
     setShowCropper(false);
-    update({ croppedImage });
+    update({ croppedImage, cropAspect: aspect });
     try {
       const colors = await extractColorsFromImage(croppedImage, 5);
       const bg = recommendBgColor(colors);
@@ -220,9 +220,7 @@ export default function App() {
               {activeSection === 'image' && (
                 <ImageUploader
                   hasImage={!!state.croppedImage}
-                  cropAspect={state.cropAspect}
                   onUpload={handleUpload}
-                  onAspectChange={(aspect) => update({ cropAspect: aspect })}
                   onOpenCropper={() => {
                     if (state.originalImage) {
                       setImageForCrop(state.originalImage);

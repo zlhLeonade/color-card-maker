@@ -129,3 +129,42 @@ input[type="color"]::-webkit-color-swatch {
 .safe-bottom {
   padding-bottom: max(12px, env(safe-area-inset-bottom));
 }
+
+.safe-top {
+  padding-top: max(8px, env(safe-area-inset-top));
+}
+
+/* ---- Dark slider (for cropper) ---- */
+.slider-dark {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  outline: none;
+}
+.slider-dark::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  transition: transform 0.15s ease;
+}
+.slider-dark::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+}
+.slider-dark::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}

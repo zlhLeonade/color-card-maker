@@ -23,6 +23,8 @@ export interface ExifSettings {
   showCamera: boolean;
 }
 
+export type CropAspect = 'original' | '1:1' | '3:2' | '4:3' | '16:9' | '9:16';
+
 export type ExportQuality = 'sd' | 'hd' | 'fhd' | 'uhd';
 
 export interface ExportPreset {
@@ -44,7 +46,7 @@ export const EXPORT_PRESETS: ExportPreset[] = [
 export interface PosterState {
   originalImage: string | null;
   croppedImage: string | null;
-  cropAspect: '4:3' | '3:2';
+  cropAspect: CropAspect;
   bgColor: string;
   colors: string[];
   text: TextStyle;

@@ -2,17 +2,13 @@ import { Upload, Crop } from 'lucide-react';
 
 interface ImageUploaderProps {
   hasImage: boolean;
-  cropAspect: '4:3' | '3:2';
   onUpload: (file: File) => void;
-  onAspectChange: (aspect: '4:3' | '3:2') => void;
   onOpenCropper: () => void;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 export default function ImageUploader({
   hasImage,
-  cropAspect,
-  onAspectChange,
   onOpenCropper,
   fileInputRef,
 }: ImageUploaderProps) {
@@ -36,27 +32,9 @@ export default function ImageUploader({
           </button>
         )}
       </div>
-
-      <div>
-        <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium block mb-2">
-          裁剪比例
-        </label>
-        <div className="flex gap-2 bg-stone-100/60 rounded-xl p-1">
-          {(['4:3', '3:2'] as const).map((ratio) => (
-            <button
-              key={ratio}
-              onClick={() => onAspectChange(ratio)}
-              className={`flex-1 min-h-[44px] text-xs rounded-lg font-medium transition-all duration-200 ${
-                cropAspect === ratio
-                  ? 'bg-white text-stone-800 shadow-sm'
-                  : 'text-stone-400 active:text-stone-600'
-              }`}
-            >
-              {ratio}
-            </button>
-          ))}
-        </div>
-      </div>
+      <p className="text-[11px] text-stone-300 text-center">
+        上传后可在裁剪界面选择比例、旋转和翻转
+      </p>
     </div>
   );
 }
