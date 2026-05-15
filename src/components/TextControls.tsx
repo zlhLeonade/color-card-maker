@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Bold, Italic, AlignLeft, AlignCenter, AlignRight, Move } from 'lucide-react';
 import type { TextStyle } from '../types';
 import { FONT_OPTIONS } from '../types';
 import { generateCaption } from '../utils/caption';
@@ -43,6 +43,15 @@ function Slider({ label, value, min, max, step, unit, onChange }: {
   );
 }
 
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      <span className="text-[11px] text-stone-400 tracking-wide uppercase font-medium">{children}</span>
+      <div className="flex-1 h-px bg-stone-200/50" />
+    </div>
+  );
+}
+
 export default function TextControls({
   text,
   onChange,
@@ -63,18 +72,22 @@ export default function TextControls({
     update({ content: caption });
   };
 
+  const alignOptions = [
+    { value: 'left' as const, Icon: AlignLeft },
+    { value: 'center' as const, Icon: AlignCenter },
+    { value: 'right' as const, Icon: AlignRight },
+  ];
+
   return (
-    <div className="space-y-5">
-      {/* Text input + generate button */}
+    <div className="space-y-6">
+      {/* ── Content ── */}
       <div>
-        <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium block mb-2">
-          文字内容
-        </label>
+        <SectionLabel>内容</SectionLabel>
         <textarea
           value={text.content}
           onChange={(e) => update({ content: e.target.value })}
           placeholder="输入海报文字..."
-          rows={2}
+          rows={3}
           className="w-full px-3.5 py-3 bg-stone-50/80 border border-stone-200/60 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-stone-300/50 focus:border-stone-300 transition-all placeholder:text-stone-300"
         />
         <button
@@ -86,11 +99,9 @@ export default function TextControls({
         </button>
       </div>
 
-      {/* Font family */}
+      {/* ── Font ── */}
       <div>
-        <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium block mb-2">
-          字体
-        </label>
+        <SectionLabel>字体</SectionLabel>
         <select
           value={text.fontFamily}
           onChange={(e) => update({ fontFamily: e.target.value })}
@@ -104,20 +115,82 @@ export default function TextControls({
         </select>
       </div>
 
-      <Slider label="字号" value={text.fontSize} min={14} max={72} unit="px"
-        onChange={(v) => update({ fontSize: v })} />
-      <Slider label="字间距" value={text.letterSpacing} min={0} max={0.3} step={0.01} unit="em"
-        onChange={(v) => update({ letterSpacing: v })} />
-      <Slider label="行高" value={text.lineHeight} min={1} max={2.5} step={0.1} unit=""
-        onChange={(v) => update({ lineHeight: v })} />
-      <Slider label="位置" value={text.position} min={5} max={50} unit="%"
-        onChange={(v) => update({ position: v })} />
-
-      {/* Text color */}
+      {/* ── Typography ── */}
       <div>
-        <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium block mb-3">
-          文字颜色
-        </label>
+        <SectionLabel>排版</SectionLabel>
+        <div className="space-y-2">
+          <Slider label="字号" value={text.fontSize} min={14} max={72} unit="px"
+            onChange={(v) => update({ fontSize: v })} />
+          <Slider label="字间距" value={text.letterSpacing} min={0} max={0.3} step={0.01} unit="em"
+            onChange={(v) => update({ letterSpacing: v })} />
+          <Slider label="行高" value={text.lineHeight} min={1} max={2.5} step={0.1} unit=""
+            onChange={(v) => update({ lineHeight: v })} />
+        </div>
+
+        {/* Bold / Italic toggles */}
+        <div className="flex items-center gap-2 mt-4">
+          <button
+            onClick={() => update({ bold: !text.bold })}
+            className={`flex-1 flex items-center justify-center gap-1.5 min-h-[40px] rounded-xl text-sm font-medium transition-colors ${
+              text.bold
+                ? 'bg-stone-800 text-white'
+                : 'bg-stone-100/80 text-stone-500 active:bg-stone-200'
+            }`}
+          >
+            <Bold size={15} />
+            粗体
+          </button>
+          <button
+            onClick={() => update({ italic: !text.italic })}
+            className={`flex-1 flex items-center justify-center gap-1.5 min-h-[40px] rounded-xl text-sm font-medium transition-colors ${
+              text.italic
+                ? 'bg-stone-800 text-white'
+                : 'bg-stone-100/80 text-stone-500 active:bg-stone-200'
+            }`}
+          >
+            <Italic size={15} />
+            斜体
+          </button>
+        </div>
+
+        {/* Alignment segmented control */}
+        <div className="flex bg-stone-100/80 rounded-xl p-1 mt-3">
+          {alignOptions.map(({ value, Icon }) => (
+            <button
+              key={value}
+              onClick={() => update({ align: value })}
+              className={`relative flex-1 flex items-center justify-center min-h-[36px] rounded-lg transition-colors ${
+                text.align === value
+                  ? 'bg-white shadow-sm text-stone-800'
+                  : 'text-stone-400 active:text-stone-500'
+              }`}
+            >
+              <Icon size={16} />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Position ── */}
+      <div>
+        <SectionLabel>位置</SectionLabel>
+        <div className="flex items-center gap-2 mb-3 px-1">
+          <Move size={12} className="text-stone-300" />
+          <span className="text-[11px] text-stone-300">可直接拖动海报上的文字</span>
+        </div>
+        <div className="space-y-2">
+          <Slider label="水平" value={text.x} min={5} max={95} unit="%"
+            onChange={(v) => update({ x: v })} />
+          <Slider label="垂直" value={text.y} min={2} max={50} unit="%"
+            onChange={(v) => update({ y: v })} />
+          <Slider label="宽度" value={text.width} min={45} max={90} unit="%"
+            onChange={(v) => update({ width: v })} />
+        </div>
+      </div>
+
+      {/* ── Text Color ── */}
+      <div>
+        <SectionLabel>文字颜色</SectionLabel>
         <div className="flex gap-3 flex-wrap items-center">
           {['#ffffff', '#1a1a1a', '#f0ede8', '#2a2520'].map((color) => (
             <button key={color} onClick={() => update({ color })} className="relative group p-1">

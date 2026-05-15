@@ -26,6 +26,7 @@ export default function App() {
   const [showCropper, setShowCropper] = useState(false);
   const [imageForCrop, setImageForCrop] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('image');
   const posterRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -91,14 +92,25 @@ export default function App() {
     setLoading(false);
   }, [state.croppedImage, update]);
 
+  const handlePositionChange = useCallback((x: number, y: number) => {
+    setState((prev) => ({
+      ...prev,
+      text: { ...prev.text, x, y },
+    }));
+  }, []);
+
   const handleExport = useCallback(async () => {
     if (!posterRef.current) return;
     setLoading(true);
+    setIsExporting(true);
+    // Wait one frame for React to re-render without edit UI
+    await new Promise((r) => requestAnimationFrame(r));
     try {
       await exportToPng(posterRef.current, state.exportQuality);
     } catch (err) {
       console.error('Export failed:', err);
     }
+    setIsExporting(false);
     setLoading(false);
   }, [state.exportQuality]);
 
@@ -131,6 +143,8 @@ export default function App() {
                 text={state.text}
                 exifData={state.exifData}
                 exifSettings={state.exifSettings}
+                isExporting={isExporting}
+                onPositionChange={handlePositionChange}
               />
             </div>
           ) : (

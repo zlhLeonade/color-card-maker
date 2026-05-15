@@ -3,7 +3,12 @@ export interface TextStyle {
   fontFamily: string;
   fontSize: number;
   color: string;
-  position: number; // percentage from top
+  x: number;       // percentage from left (center of text box)
+  y: number;       // percentage from top
+  width: number;   // percentage width of text box (45–90)
+  bold: boolean;
+  italic: boolean;
+  align: 'left' | 'center' | 'right';
   letterSpacing: number;
   lineHeight: number;
 }
@@ -60,7 +65,12 @@ export const DEFAULT_STATE: PosterState = {
     fontFamily: '"LXGW WenKai", KaiTi, STKaiti, serif',
     fontSize: 30,
     color: '#f0ede8',
-    position: 16,
+    x: 50,
+    y: 16,
+    width: 70,
+    bold: false,
+    italic: false,
+    align: 'center',
     letterSpacing: 0.06,
     lineHeight: 1.5,
   },
