@@ -204,7 +204,7 @@ export default function App() {
                     />
                   )}
                   <Icon size={16} strokeWidth={2} className="relative z-10" />
-                  <span className="relative z-10 text-[10px] font-medium">{s.label}</span>
+                  <span className="relative z-10 text-[11px] font-medium">{s.label}</span>
                 </button>
               );
             })}
@@ -212,7 +212,7 @@ export default function App() {
         </div>
 
         {/* Panel content — scrollable */}
-        <div className="flex-1 panel-scroll px-5 pb-4 safe-bottom lg:pb-6">
+        <div className="flex-1 panel-scroll px-4 pb-4 safe-bottom lg:px-5 lg:pb-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSection}

@@ -53,7 +53,7 @@ export default function ColorPalette({
                 />
               )}
             </div>
-            <span className="text-[9px] text-stone-400 font-mono tracking-tight">
+            <span className="text-[10px] text-stone-400 font-mono tracking-tight">
               {color.toUpperCase()}
             </span>
           </motion.button>

@@ -196,7 +196,7 @@ export default function ImageCropper({
               <button
                 key={opt.id}
                 onClick={() => handleAspectChange(opt.id)}
-                className="shrink-0 min-h-[36px] px-4 rounded-full text-xs font-medium transition-all active:scale-95"
+                className="shrink-0 min-h-[40px] px-5 rounded-full text-sm font-medium transition-all active:scale-95"
                 style={{
                   background: currentAspect === opt.id ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.1)',
                   color: currentAspect === opt.id ? '#0a0a0a' : 'rgba(255,255,255,0.6)',
@@ -233,7 +233,7 @@ export default function ImageCropper({
               >
                 <Icon size={17} style={{ color: active ? '#fff' : 'rgba(255,255,255,0.7)' }} />
               </div>
-              <span style={{ fontSize: 10, color: active ? '#fff' : 'rgba(255,255,255,0.4)' }}>
+              <span style={{ fontSize: 11, color: active ? '#fff' : 'rgba(255,255,255,0.4)' }}>
                 {label}
               </span>
             </button>

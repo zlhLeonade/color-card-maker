@@ -37,8 +37,8 @@ export default function ExportPanel({
                   : 'bg-stone-50/80 text-stone-600 active:bg-stone-100 border border-stone-200/60'
               }`}
             >
-              <div className="text-xs font-semibold">{preset.label}</div>
-              <div className={`text-[10px] mt-0.5 ${quality === preset.id ? 'text-stone-300' : 'text-stone-400'}`}>
+              <div className="text-sm font-semibold">{preset.label}</div>
+              <div className={`text-[11px] mt-0.5 ${quality === preset.id ? 'text-stone-300' : 'text-stone-400'}`}>
                 {preset.description}
               </div>
               {preset.warn && (

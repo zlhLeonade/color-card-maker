@@ -45,11 +45,11 @@ function CompactSlider({ label, value, min, max, step, unit, onChange }: {
     : String(Math.round(value));
 
   return (
-    <div className="flex items-center gap-1.5 py-1.5">
-      <span className="text-[11px] text-stone-400 w-7 shrink-0 font-medium">{label}</span>
+    <div className="flex items-center gap-1.5 py-1">
+      <span className="text-[11px] text-stone-400 w-8 shrink-0 font-medium">{label}</span>
       <button
         onClick={() => nudge(-1)}
-        className="w-7 h-7 rounded-full bg-stone-100/80 flex items-center justify-center text-stone-500 active:bg-stone-200 active:text-stone-700 transition-colors text-sm font-medium select-none"
+        className="w-7 h-7 rounded-full bg-stone-100/80 flex items-center justify-center text-stone-500 active:bg-stone-200 active:text-stone-700 transition-colors text-xs font-medium select-none"
       >
         −
       </button>
@@ -65,7 +65,7 @@ function CompactSlider({ label, value, min, max, step, unit, onChange }: {
       />
       <button
         onClick={() => nudge(1)}
-        className="w-7 h-7 rounded-full bg-stone-100/80 flex items-center justify-center text-stone-500 active:bg-stone-200 active:text-stone-700 transition-colors text-sm font-medium select-none"
+        className="w-7 h-7 rounded-full bg-stone-100/80 flex items-center justify-center text-stone-500 active:bg-stone-200 active:text-stone-700 transition-colors text-xs font-medium select-none"
       >
         +
       </button>
@@ -105,14 +105,14 @@ export default function TextControls({
     <div>
       {/* ── Sub-tabs ── */}
       <div
-        className="flex gap-1.5 mb-3 overflow-x-auto"
+        className="flex gap-2 mb-3 overflow-x-auto"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {TEXT_TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all min-h-[32px] ${
+            className={`shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all active:scale-95 min-h-[40px] ${
               activeTab === tab.id
                 ? 'bg-stone-800 text-white shadow-sm'
                 : 'bg-stone-100/80 text-stone-500 active:bg-stone-200'
@@ -134,19 +134,19 @@ export default function TextControls({
         >
           {/* Content */}
           {activeTab === 'content' && (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <textarea
                 value={text.content}
                 onChange={(e) => update({ content: e.target.value })}
                 placeholder="输入海报文字..."
                 rows={2}
-                className="w-full px-3 py-2.5 bg-stone-50/80 border border-stone-200/60 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-stone-300/50 focus:border-stone-300 transition-all placeholder:text-stone-300"
+                className="w-full px-3.5 py-3 bg-stone-50/80 border border-stone-200/60 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-stone-300/50 focus:border-stone-300 transition-all placeholder:text-stone-300"
               />
               <button
                 onClick={handleGenerate}
-                className="w-full flex items-center justify-center gap-2 min-h-[38px] px-4 bg-stone-100/60 text-stone-500 rounded-xl text-xs font-medium active:bg-stone-200/80 transition-colors"
+                className="w-full flex items-center justify-center gap-2 min-h-[44px] px-4 bg-stone-100/60 text-stone-500 rounded-xl text-sm font-medium active:bg-stone-200/80 transition-colors active:scale-[0.98]"
               >
-                <Sparkles size={13} />
+                <Sparkles size={14} />
                 Generate caption
               </button>
             </div>
@@ -159,7 +159,7 @@ export default function TextControls({
               <select
                 value={text.fontFamily}
                 onChange={(e) => update({ fontFamily: e.target.value })}
-                className="w-full px-3 py-2.5 bg-stone-50/80 border border-stone-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-300/50 focus:border-stone-300 transition-all appearance-none cursor-pointer"
+                className="w-full px-3.5 py-3 bg-stone-50/80 border border-stone-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-300/50 focus:border-stone-300 transition-all appearance-none cursor-pointer min-h-[44px]"
               >
                 {FONT_OPTIONS.map((font) => (
                   <option key={font.value} value={font.value}>{font.label}</option>
@@ -170,19 +170,19 @@ export default function TextControls({
               <div className="flex gap-2">
                 <button
                   onClick={() => update({ bold: !text.bold })}
-                  className={`flex-1 flex items-center justify-center gap-1.5 min-h-[36px] rounded-xl text-xs font-medium transition-colors ${
+                  className={`flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-xl text-sm font-medium transition-colors active:scale-[0.98] ${
                     text.bold ? 'bg-stone-800 text-white' : 'bg-stone-100/80 text-stone-500 active:bg-stone-200'
                   }`}
                 >
-                  <Bold size={14} />粗体
+                  <Bold size={15} />粗体
                 </button>
                 <button
                   onClick={() => update({ italic: !text.italic })}
-                  className={`flex-1 flex items-center justify-center gap-1.5 min-h-[36px] rounded-xl text-xs font-medium transition-colors ${
+                  className={`flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-xl text-sm font-medium transition-colors active:scale-[0.98] ${
                     text.italic ? 'bg-stone-800 text-white' : 'bg-stone-100/80 text-stone-500 active:bg-stone-200'
                   }`}
                 >
-                  <Italic size={14} />斜体
+                  <Italic size={15} />斜体
                 </button>
               </div>
 
@@ -192,37 +192,37 @@ export default function TextControls({
                   <button
                     key={value}
                     onClick={() => update({ align: value })}
-                    className={`relative flex-1 flex items-center justify-center min-h-[32px] rounded-lg transition-colors ${
+                    className={`relative flex-1 flex items-center justify-center min-h-[40px] rounded-lg transition-colors active:scale-95 ${
                       text.align === value ? 'bg-white shadow-sm text-stone-800' : 'text-stone-400 active:text-stone-500'
                     }`}
                   >
-                    <Icon size={15} />
+                    <Icon size={16} />
                   </button>
                 ))}
               </div>
 
               {/* Text color */}
-              <div className="flex gap-2 flex-wrap items-center">
+              <div className="flex gap-2.5 flex-wrap items-center">
                 {['#ffffff', '#1a1a1a', '#f0ede8', '#2a2520'].map((color) => (
-                  <button key={color} onClick={() => update({ color })} className="relative group p-0.5">
+                  <button key={color} onClick={() => update({ color })} className="relative group p-1">
                     <div
-                      className="w-8 h-8 rounded-full transition-transform duration-150 group-active:scale-90"
+                      className="w-10 h-10 rounded-full transition-transform duration-150 group-active:scale-90"
                       style={{
                         backgroundColor: color,
                         boxShadow: color === '#ffffff' || color === '#f0ede8' ? 'inset 0 0 0 1px rgba(0,0,0,0.08)' : 'none',
                       }}
                     />
-                    {text.color === color && <div className="absolute inset-0 rounded-full border-2 border-stone-600" />}
+                    {text.color === color && <div className="absolute inset-1 rounded-full border-2 border-stone-600" />}
                   </button>
                 ))}
                 {extractedColors.map((color) => (
-                  <button key={`tc-${color}`} onClick={() => update({ color })} className="relative group p-0.5">
-                    <div className="w-8 h-8 rounded-full transition-transform duration-150 group-active:scale-90" style={{ backgroundColor: color }} />
-                    {text.color === color && <div className="absolute inset-0 rounded-full border-2 border-stone-600" />}
+                  <button key={`tc-${color}`} onClick={() => update({ color })} className="relative group p-1">
+                    <div className="w-10 h-10 rounded-full transition-transform duration-150 group-active:scale-90" style={{ backgroundColor: color }} />
+                    {text.color === color && <div className="absolute inset-1 rounded-full border-2 border-stone-600" />}
                   </button>
                 ))}
-                <div className="relative p-0.5">
-                  <input type="color" value={text.color} onChange={(e) => update({ color: e.target.value })} className="w-8 h-8 rounded-full cursor-pointer" />
+                <div className="relative p-1">
+                  <input type="color" value={text.color} onChange={(e) => update({ color: e.target.value })} className="w-10 h-10 rounded-full cursor-pointer" />
                 </div>
               </div>
             </div>
@@ -244,9 +244,9 @@ export default function TextControls({
 
           {/* Position */}
           {activeTab === 'position' && (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {/* Quick position presets */}
-              <div className="flex gap-1.5">
+              <div className="flex gap-2">
                 {[
                   { label: '顶部居中', x: 50, y: 8 },
                   { label: '默认位置', x: 50, y: 16 },
@@ -255,7 +255,7 @@ export default function TextControls({
                   <button
                     key={preset.label}
                     onClick={() => update({ x: preset.x, y: preset.y })}
-                    className={`flex-1 min-h-[32px] rounded-lg text-[11px] font-medium transition-colors ${
+                    className={`flex-1 min-h-[40px] rounded-xl text-sm font-medium transition-colors active:scale-[0.98] ${
                       text.x === preset.x && text.y === preset.y
                         ? 'bg-stone-800 text-white'
                         : 'bg-stone-100/80 text-stone-500 active:bg-stone-200'
@@ -272,8 +272,8 @@ export default function TextControls({
                 onChange={(v) => update({ y: v })} />
 
               <div className="flex items-center gap-1.5 px-1 pt-1">
-                <Move size={11} className="text-stone-300" />
-                <span className="text-[10px] text-stone-300">可直接拖动海报上的文字</span>
+                <Move size={12} className="text-stone-300" />
+                <span className="text-[11px] text-stone-300">可直接拖动海报上的文字</span>
               </div>
             </div>
           )}
