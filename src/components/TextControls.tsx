@@ -45,11 +45,11 @@ function CompactSlider({ label, value, min, max, step, unit, onChange }: {
     : String(Math.round(value));
 
   return (
-    <div className="flex items-center gap-1.5 py-1">
-      <span className="text-[11px] text-stone-400 w-8 shrink-0 font-medium">{label}</span>
+    <div className="flex items-center gap-1.5 py-1.5">
+      <span className="text-xs text-stone-400 w-9 shrink-0 font-medium">{label}</span>
       <button
         onClick={() => nudge(-1)}
-        className="w-7 h-7 rounded-full bg-stone-100/80 flex items-center justify-center text-stone-500 active:bg-stone-200 active:text-stone-700 transition-colors text-xs font-medium select-none"
+        className="w-7 h-7 rounded-full bg-stone-100/80 flex items-center justify-center text-stone-500 active:bg-stone-200 active:text-stone-700 transition-colors text-sm font-medium select-none"
       >
         −
       </button>
@@ -65,11 +65,11 @@ function CompactSlider({ label, value, min, max, step, unit, onChange }: {
       />
       <button
         onClick={() => nudge(1)}
-        className="w-7 h-7 rounded-full bg-stone-100/80 flex items-center justify-center text-stone-500 active:bg-stone-200 active:text-stone-700 transition-colors text-xs font-medium select-none"
+        className="w-7 h-7 rounded-full bg-stone-100/80 flex items-center justify-center text-stone-500 active:bg-stone-200 active:text-stone-700 transition-colors text-sm font-medium select-none"
       >
         +
       </button>
-      <span className="text-[11px] text-stone-500 w-10 text-right tabular-nums font-medium">
+      <span className="text-xs text-stone-500 w-11 text-right tabular-nums font-medium">
         {display}{unit}
       </span>
     </div>
@@ -105,14 +105,14 @@ export default function TextControls({
     <div>
       {/* ── Sub-tabs ── */}
       <div
-        className="flex gap-2 mb-3 overflow-x-auto"
+        className="grid grid-cols-4 gap-2 mb-3"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {TEXT_TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all active:scale-95 min-h-[40px] ${
+            className={`w-full px-1.5 py-2 rounded-2xl text-[15px] font-medium transition-all active:scale-95 min-h-[42px] ${
               activeTab === tab.id
                 ? 'bg-stone-800 text-white shadow-sm'
                 : 'bg-stone-100/80 text-stone-500 active:bg-stone-200'

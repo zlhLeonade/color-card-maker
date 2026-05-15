@@ -63,8 +63,8 @@ export const DEFAULT_STATE: PosterState = {
   bgColor: '#c8b8a8',
   colors: [],
   text: {
-    content: '把今天的颜色留下',
-    fontFamily: '"LXGW WenKai", KaiTi, STKaiti, serif',
+    content: 'Found in the light.',
+    fontFamily: '"Special Elite", cursive',
     fontSize: 28,
     color: '#f0ede8',
     x: 50,

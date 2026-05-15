@@ -38,7 +38,7 @@ input[type="range"] {
   appearance: none;
   width: 100%;
   height: 4px;
-  border-radius: 2px;
+  border-radius: 999px;
   background: rgba(0, 0, 0, 0.08);
   outline: none;
   transition: background 0.2s;
@@ -49,8 +49,8 @@ input[type="range"]:hover {
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
   border-radius: 50%;
   background: #fff;
   cursor: pointer;
@@ -59,7 +59,7 @@ input[type="range"]::-webkit-slider-thumb {
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 input[type="range"]::-webkit-slider-thumb:active {
-  transform: scale(1.1);
+  transform: scale(1.08);
   box-shadow: 0 2px 6px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.06);
 }
 
@@ -82,7 +82,7 @@ input, select, textarea {
 
 /* ---- Bottom sheet glass ---- */
 .bottom-sheet {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(24px) saturate(1.8);
   -webkit-backdrop-filter: blur(24px) saturate(1.8);
   border-top: 1px solid rgba(255, 255, 255, 0.6);
@@ -140,15 +140,15 @@ input[type="color"]::-webkit-color-swatch {
   appearance: none;
   width: 100%;
   height: 4px;
-  border-radius: 2px;
+  border-radius: 999px;
   background: rgba(255, 255, 255, 0.15);
   outline: none;
 }
 .slider-dark::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
   border-radius: 50%;
   background: #fff;
   cursor: pointer;
@@ -157,11 +157,11 @@ input[type="color"]::-webkit-color-swatch {
   transition: transform 0.15s ease;
 }
 .slider-dark::-webkit-slider-thumb:active {
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 .slider-dark::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
   border-radius: 50%;
   background: #fff;
   cursor: pointer;
