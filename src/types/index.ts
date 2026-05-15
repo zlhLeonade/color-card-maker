@@ -65,7 +65,7 @@ export const DEFAULT_STATE: PosterState = {
   text: {
     content: '把今天的颜色留下',
     fontFamily: '"LXGW WenKai", KaiTi, STKaiti, serif',
-    fontSize: 30,
+    fontSize: 28,
     color: '#f0ede8',
     x: 50,
     y: 16,

@@ -176,6 +176,11 @@ export default function App() {
 
       {/* Bottom panel (mobile) / Right panel (desktop) */}
       <div className="lg:w-[400px] flex flex-col bottom-sheet lg:bg-white/70 lg:backdrop-blur-lg lg:border-l lg:border-stone-200/50 lg:rounded-none">
+        {/* Handle bar */}
+        <div className="flex justify-center pt-2 pb-0.5 lg:hidden">
+          <div className="w-9 h-1 rounded-full bg-stone-300/40" />
+        </div>
+
         {/* Tab bar */}
         <div className="px-3 pt-2 pb-1 lg:px-5 lg:pt-5 lg:pb-3">
           <div className="flex bg-stone-100/50 rounded-xl p-1">
