@@ -11,7 +11,10 @@ import { extractColorsFromImage, recommendTextColor, recommendBgColor } from './
 import { readExifData } from './utils/image';
 import { exportToPng } from './utils/export';
 import { formatExifDateShort } from './utils/date';
-import { DEFAULT_STATE, type PosterState, type CropAspect } from './types';
+import {
+  DEFAULT_STATE,
+  type PosterState, type CropAspect, type ColorInfoMode,
+} from './types';
 
 const sections = [
   { id: 'image', label: '图片', icon: Image },
@@ -22,12 +25,13 @@ const sections = [
 ];
 
 export default function App() {
+  // ── ColorWalk state ──
   const [state, setState] = useState<PosterState>(DEFAULT_STATE);
   const [showCropper, setShowCropper] = useState(false);
   const [imageForCrop, setImageForCrop] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('image');
+  const [loading, setLoading] = useState(false);
   const posterRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -35,6 +39,7 @@ export default function App() {
     setState((prev) => ({ ...prev, ...partial }));
   }, []);
 
+  // Upload → open cropper
   const handleUpload = useCallback((file: File) => {
     const reader = new FileReader();
     reader.onload = async (e) => {
@@ -52,6 +57,7 @@ export default function App() {
     reader.readAsDataURL(file);
   }, [update]);
 
+  // Crop complete → extract colors
   const handleCropComplete = useCallback(async (croppedImage: string, aspect: CropAspect) => {
     setShowCropper(false);
     update({ croppedImage, cropAspect: aspect });
@@ -92,18 +98,23 @@ export default function App() {
     setLoading(false);
   }, [state.croppedImage, update]);
 
-  const handlePositionChange = useCallback((x: number, y: number) => {
-    setState((prev) => ({
-      ...prev,
-      text: { ...prev.text, x, y },
-    }));
+  const handleMainTextPosChange = useCallback((x: number, y: number) => {
+    setState((prev) => ({ ...prev, mainTextBox: { x, y }, text: { ...prev.text, x, y } }));
+  }, []);
+  const handleDatePosChange = useCallback((x: number, y: number) => {
+    setState((prev) => ({ ...prev, dateTextBox: { x, y } }));
+  }, []);
+  const handleCameraPosChange = useCallback((x: number, y: number) => {
+    setState((prev) => ({ ...prev, cameraTextBox: { x, y } }));
+  }, []);
+  const handleColorInfoPosChange = useCallback((x: number, y: number) => {
+    setState((prev) => ({ ...prev, colorInfoTextBox: { x, y } }));
   }, []);
 
   const handleExport = useCallback(async () => {
     if (!posterRef.current) return;
     setLoading(true);
     setIsExporting(true);
-    // Wait one frame for React to re-render without edit UI
     await new Promise((r) => requestAnimationFrame(r));
     try {
       await exportToPng(posterRef.current, state.exportQuality);
@@ -122,8 +133,6 @@ export default function App() {
 
   return (
     <div className="h-full flex flex-col lg:flex-row">
-      {/* ===== Mobile: top preview + bottom panel | Desktop: left preview + right panel ===== */}
-
       {/* Preview area */}
       <div className="flex-1 lg:flex-1 flex items-center justify-center px-4 pt-3 pb-2 lg:p-8 lg:sticky lg:top-0 lg:h-screen">
         <motion.div
@@ -139,12 +148,21 @@ export default function App() {
                 ref={posterRef}
                 bgColor={state.bgColor}
                 croppedImage={state.croppedImage}
-                imageWidth={state.imageWidth}
+                imageOffsetY={state.imageOffsetY}
+                showNoise={state.showNoise}
+                noiseIntensity={state.noiseIntensity}
                 text={state.text}
+                mainTextBox={state.mainTextBox}
+                dateTextBox={state.dateTextBox}
+                cameraTextBox={state.cameraTextBox}
+                colorInfoTextBox={state.colorInfoTextBox}
                 exifData={state.exifData}
                 exifSettings={state.exifSettings}
                 isExporting={isExporting}
-                onPositionChange={handlePositionChange}
+                onMainTextPosChange={handleMainTextPosChange}
+                onDatePosChange={handleDatePosChange}
+                onCameraPosChange={handleCameraPosChange}
+                onColorInfoPosChange={handleColorInfoPosChange}
               />
             </div>
           ) : (
@@ -174,14 +192,12 @@ export default function App() {
         </motion.div>
       </div>
 
-      {/* Bottom panel (mobile) / Right panel (desktop) */}
+      {/* Bottom panel */}
       <div className="lg:w-[400px] flex flex-col bottom-sheet lg:bg-white/70 lg:backdrop-blur-lg lg:border-l lg:border-stone-200/50 lg:rounded-none">
-        {/* Handle bar */}
         <div className="flex justify-center pt-2 pb-0.5 lg:hidden">
           <div className="w-9 h-1 rounded-full bg-stone-300/40" />
         </div>
 
-        {/* Tab bar */}
         <div className="px-3 pt-2 pb-1 lg:px-5 lg:pt-5 lg:pb-3">
           <div className="flex bg-stone-100/50 rounded-xl p-1">
             {sections.map((s) => {
@@ -211,7 +227,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Panel content — scrollable */}
         <div className="flex-1 panel-scroll px-4 pb-4 safe-bottom lg:px-5 lg:pb-6">
           <AnimatePresence mode="wait">
             <motion.div
@@ -249,23 +264,63 @@ export default function App() {
                       <p className="text-xs text-stone-400">上传照片后自动提取颜色</p>
                     </div>
                   )}
+
+                  {/* Image Y offset */}
                   <div>
                     <div className="flex justify-between mb-2">
                       <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium">
-                        照片宽度
+                        照片上下位置
                       </label>
                       <span className="text-[11px] text-stone-500 font-medium tabular-nums">
-                        {state.imageWidth}%
+                        {state.imageOffsetY > 0 ? '+' : ''}{state.imageOffsetY}%
                       </span>
                     </div>
                     <input
                       type="range"
-                      min={60}
-                      max={100}
-                      value={state.imageWidth}
-                      onChange={(e) => update({ imageWidth: Number(e.target.value) })}
+                      min={-50}
+                      max={50}
+                      value={state.imageOffsetY}
+                      onChange={(e) => update({ imageOffsetY: Number(e.target.value) })}
                     />
                   </div>
+
+                  {/* Noise toggle + intensity */}
+                  <div>
+                    <div className="flex items-center justify-between min-h-[44px]">
+                      <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium">
+                        磨砂噪点
+                      </label>
+                      <button
+                        onClick={() => update({ showNoise: !state.showNoise })}
+                        className={`relative w-12 h-7 rounded-full transition-colors duration-200 min-w-[48px] ${
+                          state.showNoise ? 'bg-stone-700' : 'bg-stone-200'
+                        }`}
+                      >
+                        <span className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow-sm transition-transform duration-200 ${
+                          state.showNoise ? 'translate-x-5' : 'translate-x-0'
+                        }`} />
+                      </button>
+                    </div>
+                    {state.showNoise && (
+                      <div className="mt-1">
+                        <div className="flex justify-between mb-1">
+                          <span className="text-[11px] text-stone-400">强度</span>
+                          <span className="text-[11px] text-stone-500 font-medium tabular-nums">
+                            {state.noiseIntensity}
+                          </span>
+                        </div>
+                        <input
+                          type="range"
+                          min={1}
+                          max={100}
+                          value={state.noiseIntensity}
+                          onChange={(e) => update({ noiseIntensity: Number(e.target.value) })}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Custom bg color */}
                   <div>
                     <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium block mb-2">
                       自定义背景色
@@ -289,6 +344,13 @@ export default function App() {
                 <TextControls
                   text={state.text}
                   onChange={(text) => setState((prev) => ({ ...prev, text }))}
+                  onPositionChange={(x, y) => {
+                    setState((prev) => ({
+                      ...prev,
+                      mainTextBox: { x, y },
+                      text: { ...prev.text, x, y },
+                    }));
+                  }}
                   extractedColors={state.colors}
                   bgColor={state.bgColor}
                   hasCamera={!!state.exifData?.cameraModel}
@@ -297,6 +359,7 @@ export default function App() {
 
               {activeSection === 'info' && (
                 <div className="space-y-4">
+                  {/* Date toggle */}
                   <div>
                     <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium block mb-2">
                       拍摄时间
@@ -319,6 +382,8 @@ export default function App() {
                       <p className="text-xs text-stone-300 min-h-[44px] flex items-center">未检测到拍摄时间</p>
                     )}
                   </div>
+
+                  {/* Camera toggle */}
                   <div>
                     <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium block mb-2">
                       相机型号
@@ -341,6 +406,32 @@ export default function App() {
                       <p className="text-xs text-stone-300 min-h-[44px] flex items-center">未检测到相机型号</p>
                     )}
                   </div>
+
+                  {/* Color info toggle */}
+                  <div>
+                    <label className="text-[11px] text-stone-400 tracking-wide uppercase font-medium block mb-2">
+                      颜色信息
+                    </label>
+                    <div className="flex gap-2">
+                      {([
+                        { id: 'none', label: '不显示' },
+                        { id: 'name', label: '颜色名' },
+                        { id: 'name-hex', label: '颜色名 + Hex' },
+                      ] as { id: ColorInfoMode; label: string }[]).map((opt) => (
+                        <button
+                          key={opt.id}
+                          onClick={() => update({ exifSettings: { ...state.exifSettings, showColorInfo: opt.id } })}
+                          className={`flex-1 min-h-[40px] rounded-xl text-sm font-medium transition-colors active:scale-[0.98] ${
+                            state.exifSettings.showColorInfo === opt.id
+                              ? 'bg-stone-800 text-white'
+                              : 'bg-stone-100/80 text-stone-500 active:bg-stone-200'
+                          }`}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -358,7 +449,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* Hidden file input — shared across components */}
+      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"

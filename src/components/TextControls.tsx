@@ -8,6 +8,7 @@ import { generateCaption } from '../utils/caption';
 interface TextControlsProps {
   text: TextStyle;
   onChange: (text: TextStyle) => void;
+  onPositionChange?: (x: number, y: number) => void;
   extractedColors: string[];
   bgColor: string;
   hasCamera: boolean;
@@ -21,6 +22,12 @@ const TEXT_TABS = [
 ] as const;
 
 type TabId = (typeof TEXT_TABS)[number]['id'];
+
+const GROUP_LABELS: Record<string, string> = {
+  cjk: '中文',
+  serif: 'Serif',
+  handwriting: 'Handwriting',
+};
 
 /* ── Compact slider with - / + buttons ── */
 function CompactSlider({ label, value, min, max, step, unit, onChange }: {
@@ -80,6 +87,7 @@ function CompactSlider({ label, value, min, max, step, unit, onChange }: {
 export default function TextControls({
   text,
   onChange,
+  onPositionChange,
   extractedColors,
   bgColor,
   hasCamera,
@@ -100,6 +108,12 @@ export default function TextControls({
     { value: 'center' as const, Icon: AlignCenter },
     { value: 'right' as const, Icon: AlignRight },
   ];
+
+  // Group fonts by category
+  const groupedFonts = FONT_OPTIONS.reduce<Record<string, typeof FONT_OPTIONS>>((acc, font) => {
+    (acc[font.group] ??= []).push(font);
+    return acc;
+  }, {});
 
   return (
     <div>
@@ -155,14 +169,18 @@ export default function TextControls({
           {/* Style */}
           {activeTab === 'style' && (
             <div className="space-y-3">
-              {/* Font selector */}
+              {/* Font selector — grouped */}
               <select
                 value={text.fontFamily}
                 onChange={(e) => update({ fontFamily: e.target.value })}
                 className="w-full px-3.5 py-3 bg-stone-50/80 border border-stone-200/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-300/50 focus:border-stone-300 transition-all appearance-none cursor-pointer min-h-[44px]"
               >
-                {FONT_OPTIONS.map((font) => (
-                  <option key={font.value} value={font.value}>{font.label}</option>
+                {Object.entries(groupedFonts).map(([group, fonts]) => (
+                  <optgroup key={group} label={GROUP_LABELS[group] ?? group}>
+                    {fonts.map((font) => (
+                      <option key={font.value} value={font.value}>{font.label}</option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
 
@@ -254,7 +272,7 @@ export default function TextControls({
                 ].map((preset) => (
                   <button
                     key={preset.label}
-                    onClick={() => update({ x: preset.x, y: preset.y })}
+                    onClick={() => onPositionChange?.(preset.x, preset.y)}
                     className={`flex-1 min-h-[40px] rounded-xl text-sm font-medium transition-colors active:scale-[0.98] ${
                       text.x === preset.x && text.y === preset.y
                         ? 'bg-stone-800 text-white'
@@ -267,9 +285,9 @@ export default function TextControls({
               </div>
 
               <CompactSlider label="水平" value={text.x} min={5} max={95} unit="%"
-                onChange={(v) => update({ x: v })} />
+                onChange={(v) => onPositionChange?.(v, text.y)} />
               <CompactSlider label="垂直" value={text.y} min={2} max={50} unit="%"
-                onChange={(v) => update({ y: v })} />
+                onChange={(v) => onPositionChange?.(text.x, v)} />
 
               <div className="flex items-center gap-1.5 px-1 pt-1">
                 <Move size={12} className="text-stone-300" />
