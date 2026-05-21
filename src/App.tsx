@@ -9,8 +9,9 @@ import TextControls from './components/TextControls';
 import ExportPanel from './components/ExportPanel';
 import { extractColorsFromImage, recommendTextColor, recommendBgColor } from './utils/color';
 import { readExifData } from './utils/image';
-import { exportToPng } from './utils/export';
+import { canvasExport, htmlExport, type ExportResult } from './utils/export';
 import { formatExifDateShort } from './utils/date';
+import { browserInfo, getRecommendedQuality } from './utils/browser';
 import {
   DEFAULT_STATE,
   type PosterState, type CropAspect, type ColorInfoMode,
@@ -26,12 +27,17 @@ const sections = [
 
 export default function App() {
   // ── ColorWalk state ──
-  const [state, setState] = useState<PosterState>(DEFAULT_STATE);
+  const recommendedQuality = getRecommendedQuality();
+  const [state, setState] = useState<PosterState>({
+    ...DEFAULT_STATE,
+    exportQuality: recommendedQuality,
+  });
   const [showCropper, setShowCropper] = useState(false);
   const [imageForCrop, setImageForCrop] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('image');
   const [loading, setLoading] = useState(false);
+  const [exportResult, setExportResult] = useState<ExportResult | null>(null);
   const posterRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -115,15 +121,23 @@ export default function App() {
     if (!posterRef.current) return;
     setLoading(true);
     setIsExporting(true);
+    setExportResult(null);
     await new Promise((r) => requestAnimationFrame(r));
     try {
-      await exportToPng(posterRef.current, state.exportQuality);
+      let result: ExportResult;
+      if (browserInfo.isProblematic) {
+        result = await canvasExport(state, state.exportQuality, posterRef.current);
+      } else {
+        result = await htmlExport(posterRef.current, state.exportQuality);
+      }
+      setExportResult(result);
     } catch (err) {
       console.error('Export failed:', err);
+      setExportResult({ ok: false, error: '导出失败，请降低清晰度后重试' });
     }
     setIsExporting(false);
     setLoading(false);
-  }, [state.exportQuality]);
+  }, [state]);
 
   const handleReset = useCallback(() => {
     setState(DEFAULT_STATE);
@@ -442,6 +456,7 @@ export default function App() {
                   onQualityChange={(q) => update({ exportQuality: q })}
                   onExport={handleExport}
                   onReset={handleReset}
+                  exportResult={exportResult}
                 />
               )}
             </motion.div>
